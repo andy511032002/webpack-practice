@@ -2,7 +2,10 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
 module.exports = {
+  mode: 'production',
   entry: {
     main: path.resolve(__dirname, './src/js/joseph.js'),
   },
@@ -12,6 +15,17 @@ module.exports = {
   },
   module: {
     rules: [
+
+      {
+        test: /\.s[ac]ss$/i,
+        use: [
+          MiniCssExtractPlugin.loader, 
+          'css-loader', 
+          'postcss-loader',
+          'sass-loader'
+        ],
+      },
+
       // JavaScript
       {
         test: /\.js$/,
@@ -45,6 +59,9 @@ module.exports = {
       filename: 'index.html', // output file
     }),
     new CleanWebpackPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    })
 
   ],
 

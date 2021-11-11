@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "practice",
   "main": "webpack.config.js",
-  "dependencies": {},
+  "dependencies": {
+    "copy-webpack-plugin": "^9.0.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.16.0",
     "@babel/plugin-proposal-class-properties": "^7.16.0",

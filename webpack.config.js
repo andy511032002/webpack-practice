@@ -12,13 +12,25 @@ const Dotenv = require('dotenv-webpack');
 module.exports = (env, argv) => {
 
   const mode = env.mode || 'development';
+  const isProduction = mode === 'production';
 
   return ({
+    devServer: {
+      static: './dist',
+      compress: true,
+      port: 9000,
+      // 2021 update: For 4.0.0 後 writeToDisk 會放在 devMiddleware中
+      devMiddleware: {
+        writeToDisk: true
+      }
+    },
+    devtool: isProduction ? 'eval' : 'eval-source-map'.
     mode,
+    watch: true,
     entry: {
       main: path.resolve(__dirname, './src/js/joseph.js'),
     },
-    output: mode === 'production'
+    output: isProduction
     ? {
       path: path.resolve(__dirname, './dist'),
       filename: 'js/[name].prod.[hash].js',

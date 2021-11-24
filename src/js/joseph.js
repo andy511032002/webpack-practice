@@ -2,6 +2,8 @@
 import '../scss/andy.scss';
 import '../scss/joseph.scss';
 import '../scss/main.scss';
+import {c} from './joseph2';
+import d from './joseph3';
 
 window.onload = () => {
   console.log('你好123');
@@ -13,5 +15,7 @@ window.onload = () => {
   }
 
   aa();
+  c();
+  d();
 
 }

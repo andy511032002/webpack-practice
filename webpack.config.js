@@ -24,7 +24,16 @@ module.exports = (env, argv) => {
         writeToDisk: true
       }
     },
-    devtool: isProduction ? 'eval' : 'eval-source-map'.
+    devtool: isProduction ? false : 'source-map',
+    optimization: isProduction ?
+    {
+      flagIncludedChunks: true, 
+      sideEffects: true, 
+      usedExports: true, 
+      concatenateModules: true, 
+      minimize: true
+    } :
+    {},
     mode,
     watch: true,
     entry: {

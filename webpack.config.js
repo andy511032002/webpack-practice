@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const svgToMiniDataURI = require("mini-svg-data-uri");
 const Dotenv = require('dotenv-webpack');
 
 // --env aaa=zzz 可以透過此方法在 下方 env 中取到 aaa 的值 
@@ -22,7 +23,8 @@ module.exports = (env, argv) => {
       // 2021 update: For 4.0.0 後 writeToDisk 會放在 devMiddleware中
       devMiddleware: {
         writeToDisk: true
-      }
+      },
+      hot: true
     },
     devtool: isProduction ? false : 'source-map',
     optimization: isProduction ?
@@ -64,23 +66,74 @@ module.exports = (env, argv) => {
         {
           test: /\.js$/,
           exclude: /node_modules/,
-          use: ['babel-loader'],
+          use: [
+            {
+              loader: 'babel-loader',
+              options: {
+                presets: [
+                  [
+                    "@babel/preset-env",
+                    {
+                      "useBuiltIns": "usage",
+                      "corejs": 3
+                    }
+                  ]
+                ],
+                plugins: ["@babel/plugin-proposal-class-properties"]
+              }
+
+            }    
+            
+          
+        ]
         },
         // Images / file 目前由複製檔案取代(CopyWebpackPlugin)，之後確認是有什麼情匡要用file-loader
-        // {
-        //   test: /\.(png|jpg|gif)$/,
-        //   use: [
-        //       {
-        //           loader: 'file-loader',
-        //           options: {
-        //               name: '[path][name].[ext]',
-        //               context: path.resolve(__dirname, 'src/'),
-        //               publicPath: '../',
-        //               useRelativePaths: true
-        //           }
-        //       }
-        //   ] 
-        // },
+        {
+          test: /\.(png|jpg|gif)$/,
+          use: [
+              {
+                loader: 'file-loader',
+                options: {
+                  name: '[path][name].[ext]',
+                  context: path.resolve(__dirname, 'src/'),
+                  publicPath: '../',
+                  limit: 100,
+                  useRelativePaths: true
+                }
+              },
+              // {
+              //   loader: "url-loader",
+              //   options: {
+              //     limit: 0,
+              //     name: '[path][name].[ext]',
+              //     context: path.resolve(__dirname, 'src/'),
+              //     useRelativePaths: true
+              //   }
+              // },
+              'image-webpack-loader',
+          ] 
+        },
+
+        // Svg
+        {
+          test: /\.svg$/,
+          use: [
+            {
+              loader: "file-loader",
+              options: {
+                name: '[path][name].[ext]',
+                context: path.resolve(__dirname, 'src/'),
+                publicPath: '../',
+                // 編譯後的檔案大小不可小於limit
+                // 小於limit : 不會產出檔案 程式會用'data:image/.....'的方式引入 
+                // 大於limit : 會產出檔案 程式會用'./assets/.....'的方式引入 
+                limit: 310,
+                generator: (content) => svgToMiniDataURI(content.toString()),
+              },
+            },
+            "image-webpack-loader"
+          ]
+        }
   
       ],
       
@@ -100,9 +153,9 @@ module.exports = (env, argv) => {
         filename: '[name]-[contenthash:8].css',
       }),
       // 暫時用來複製檔案 
-      new CopyWebpackPlugin({
-        patterns: [{ from: 'src/assets', to: 'assets' }],
-      }), 
+      // new CopyWebpackPlugin({
+      //   patterns: [{ from: 'src/assets', to: 'assets' }],
+      // }), 
       // 目前
       // new webpack.DefinePlugin({
       //   'process.env':{

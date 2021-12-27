@@ -33,11 +33,21 @@ module.exports = (env, argv) => {
       sideEffects: true, 
       usedExports: true, 
       concatenateModules: true, 
-      minimize: true
+      minimize: true,
+      splitChunks: {
+        chunks: "all",
+      },
     } :
-    {},
+    {
+      splitChunks: {
+        chunks: "all",
+      },
+      runtimeChunk: true
+
+    },
+
     mode,
-    watch: true,
+    watch: false,
     entry: {
       main: path.resolve(__dirname, './src/js/joseph.js'),
     },
@@ -79,7 +89,8 @@ module.exports = (env, argv) => {
                     }
                   ]
                 ],
-                plugins: ["@babel/plugin-proposal-class-properties"]
+                plugins: ["@babel/plugin-proposal-class-properties"],
+                sourceType: "unambiguous"
               }
 
             }    
@@ -150,7 +161,7 @@ module.exports = (env, argv) => {
         filename: 'index.html', // output file
       }),
       new MiniCssExtractPlugin({
-        filename: '[name]-[contenthash:8].css',
+        filename: '[name]-[hash].css',
       }),
       // 暫時用來複製檔案 
       // new CopyWebpackPlugin({

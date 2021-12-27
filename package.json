@@ -4,7 +4,7 @@
   "description": "practice",
   "main": "webpack.config.js",
   "dependencies": {
-    "@x-plan/npm-package-sample": "0.0.2",
+    "@x-plan/npm-package-sample": "0.0.9",
     "date-fns": "^2.26.0",
     "lodash": "^4.17.21"
   },

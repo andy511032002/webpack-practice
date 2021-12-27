@@ -55,6 +55,12 @@ module.exports = (env, argv) => {
     ? {
       path: path.resolve(__dirname, './dist'),
       filename: 'js/[name].prod.[hash].js',
+      // 如果要使用webpack打包一個library 讓其他使用者可以使用（發佈到npm），需要將 library.type作設定
+      // type 類型可參考：
+      // https://webpack.js.org/configuration/output/#outputlibrarytype 
+      // library: {
+      //   type: 'module',
+      // },
       }
     : {
       path: path.resolve(__dirname, './dist'),
